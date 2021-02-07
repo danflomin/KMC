@@ -54,6 +54,9 @@ class CSplitter {
 
 	CSignatureMapper* s_mapper;
 
+	uint32* stats;
+	uint32 map_size;
+
 	bool homopolymer_compressed;
 
 	bool GetSeqLongRead(char *seq, uint32 &seq_size, uchar header_marker);
@@ -66,7 +69,7 @@ public:
 	static uint32 MAX_LINE_SIZE;
 
 	
-	CSplitter(CKMCParams &Params, CKMCQueues &Queues); 
+	CSplitter(CKMCParams &Params, CKMCQueues &Queues, uint32* _stats);
 	void InitBins(CKMCParams &Params, CKMCQueues &Queues);	
 	void CalcStats(uchar* _part, uint64 _part_size, ReadType read_type, uint32* _stats);
 	bool ProcessReads(uchar *_part, uint64 _part_size, ReadType read_type);
@@ -105,7 +108,7 @@ class CWSplitter {
 	uint64 n_reads;
 
 public:
-	CWSplitter(CKMCParams &Params, CKMCQueues &Queues);	
+	CWSplitter(CKMCParams &Params, CKMCQueues &Queues, uint32* _stats);
 	void operator()();
 	void GetTotal(uint64 &_n_reads);
 	~CWSplitter();
@@ -147,7 +150,7 @@ template <typename COUNTER_TYPE> class CWSmallKSplitter {
 	uint32 kmer_len;
 
 public:
-	CWSmallKSplitter(CKMCParams &Params, CKMCQueues &Queues);
+	CWSmallKSplitter(CKMCParams &Params, CKMCQueues &Queues, uint32* _stats);
 	~CWSmallKSplitter();
 
 	void operator()();

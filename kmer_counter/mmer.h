@@ -23,6 +23,9 @@ class CMmer
 	uint32 current_val;
 	uint32* norm;
 	uint32 len;
+
+	uint32* stats;
+
 	static uint32 norm5[1 << 10];
 	static uint32 norm6[1 << 12];
 	static uint32 norm7[1 << 14];	
@@ -98,8 +101,11 @@ class CMmer
 		}
 
 	}static _init;
+
+	inline int32 strcmp(uint32 mmer1, uint32 mmer2);
+
 public:
-	CMmer(uint32 _len);
+	CMmer(uint32 _len, uint32* _stats);
 	inline void insert(uchar symb);
 	inline uint32 get() const;
 	inline bool operator==(const CMmer& x);
@@ -114,6 +120,22 @@ public:
 
 
 //--------------------------------------------------------------------------
+
+inline int32 CMmer::strcmp(uint32 mmer1, uint32 mmer2)
+{
+	if(mmer1 == mmer2)
+		return 0;
+	if(stats[mmer1] > stats[mmer2])
+		return 1;
+	if(stats[mmer1] < stats[mmer2])
+		return -1;
+	
+	// frequency is equal
+	if(mmer1 < mmer2)
+		return -1;
+	return 1;
+}
+
 inline void CMmer::insert(uchar symb)
 {
 	str <<= 2;
@@ -132,13 +154,29 @@ inline uint32 CMmer::get() const
 //--------------------------------------------------------------------------
 inline bool CMmer::operator==(const CMmer& x)
 {
-	return current_val == x.current_val;
+    if(stats == nullptr)
+    {
+        return current_val == x.current_val;
+    }
+	int32 cmp_value = strcmp(current_val, x.current_val);
+	if(cmp_value == 0)
+		return true;
+	//return current_val == x.current_val;
+    return false;
 }
 
 //--------------------------------------------------------------------------
 inline bool CMmer::operator<(const CMmer& x)
 {
-	return current_val < x.current_val;
+    if(stats == nullptr)
+    {
+        return current_val < x.current_val;
+    }
+	int32 cmp_value = strcmp(current_val, x.current_val);
+	if(cmp_value == -1)
+		return true;
+	return false;
+
 }
 
 //--------------------------------------------------------------------------
@@ -150,7 +188,14 @@ inline void CMmer::clear()
 //--------------------------------------------------------------------------
 inline bool CMmer::operator<=(const CMmer& x)
 {
-	return current_val <= x.current_val;
+    if(stats == nullptr)
+        return current_val <= x.current_val;
+
+	int32 cmp_value = strcmp(current_val, x.current_val);
+	if(cmp_value < 1)
+		return true;
+    return false;
+
 }
 
 //--------------------------------------------------------------------------
