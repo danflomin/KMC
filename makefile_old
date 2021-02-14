@@ -8,11 +8,11 @@ KMC_TOOLS_DIR = kmc_tools
 PY_KMC_API_DIR = py_kmc_api
 
 CC 	= g++
-CFLAGS	= -Wall -g -m64 -static -Wl,--whole-archive -lpthread -Wl,--no-whole-archive -std=c++11
-CLINK	= -lm -static  -Wl,--whole-archive -lpthread -Wl,--no-whole-archive -std=c++11
+CFLAGS	= -Wall -O3 -m64 -static -Wl,--whole-archive -lpthread -Wl,--no-whole-archive -std=c++11
+CLINK	= -lm -static -O3 -Wl,--whole-archive -lpthread -Wl,--no-whole-archive -std=c++11
 
-KMC_TOOLS_CFLAGS	= -Wall  -m64 -static -Wl,--whole-archive -lpthread -Wl,--no-whole-archive -std=c++14
-KMC_TOOLS_CLINK	= -lm -static  -Wl,--whole-archive -lpthread -Wl,--no-whole-archive -std=c++14
+KMC_TOOLS_CFLAGS	= -Wall -O3 -m64 -static -Wl,--whole-archive -lpthread -Wl,--no-whole-archive -std=c++14
+KMC_TOOLS_CLINK	= -lm -static -O3 -Wl,--whole-archive -lpthread -Wl,--no-whole-archive -std=c++14
 
 KMC_OBJS = \
 $(KMC_MAIN_DIR)/kmer_counter.o \
@@ -85,7 +85,7 @@ $(KMC_MAIN_DIR)/raduls_avx2.o: $(KMC_MAIN_DIR)/raduls_avx2.cpp
 	$(CC) $(CFLAGS) -mavx2 -c $< -o $@
 
 kmc: $(KMC_OBJS) $(RADULS_OBJS)
-	-mkdir $(KMC_BIN_DIR)
+	-mkdir -p $(KMC_BIN_DIR)
 	$(CC) $(CLINK) -o $(KMC_BIN_DIR)/$@ $^ $(KMC_LIBS)
 
 clean:
